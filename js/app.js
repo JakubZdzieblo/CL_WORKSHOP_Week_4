@@ -5,7 +5,7 @@ document.addEventListener("DOMContentLoaded",function(){
     addBookDetailsEvent();
     addBookDeleteEvent();
 
-})
+});
 
 
 function getBooks(){
@@ -23,16 +23,16 @@ function addBookToList(listEl ,bookObj){
     let newLi = document.createElement("li");
     newLi.dataset.id = bookObj.id;
 
-    let h2El = document.createElement("h2");
-    h2El.innerText = bookObj.title;
+    let h3El = document.createElement("h3");
+    h3El.innerText = bookObj.title;
 
     let btnDelete = document.createElement("button");
     btnDelete.innerText = "Usuń";
     btnDelete.classList.add("delete");
 
-    h2El.appendChild(btnDelete);
+    h3El.appendChild(btnDelete);
 
-    newLi.appendChild(h2El);
+    newLi.appendChild(h3El);
     listEl.appendChild(newLi)
 }
 
@@ -79,7 +79,7 @@ function addBookDeleteEvent(){
     let listEl = document.getElementById("bookList");
     listEl.addEventListener("click", function (e) {
         let caller = e.target;
-        if(caller.tagName === "BUTTON" && caller.className.indexOf("delete") != -1){
+        if(caller.tagName === "BUTTON" && caller.className.indexOf("delete") !== -1){
             let bookId = caller.parentElement.parentElement.dataset.id;
             $.ajax({
                 url: "http://localhost:8282/books/"+bookId,
@@ -89,7 +89,7 @@ function addBookDeleteEvent(){
                 .done(function(){
                     let liToDelete = caller.parentElement.parentElement;
                     liToDelete.parentElement.removeChild(liToDelete);
-                })
+                    })
         }
     })
 }
@@ -99,12 +99,34 @@ function addBookDetailsEvent(){
     let listEl = document.getElementById("bookList");
     listEl.addEventListener("click", function (e) {
         let caller = e.target;
-        if(caller.tagName === "H2"){
+        if((caller.tagName === "H3") && (!caller.classList.contains("clicked")) ){
             let bookId = caller.parentElement.dataset.id;
-            getBookDetails(bookId, function(book){
-                console.log("CREATE DIV FOR BOOK");
-                console.log(book);
+            getBookDetails(bookId, function (book){
+                let divEl = document.createElement("div");
+                let pEl1 = document.createElement("p");
+                let pEl2 = document.createElement("p");
+                let pEl3 = document.createElement("p");
+                let pEl4 = document.createElement("p");
+
+                pEl1.innerText = "Author: " + book.author;
+                pEl2.innerText = "Publisher: " + book.publisher;
+                pEl3.innerText = "Type: " + book.type;
+                pEl4.innerText = "ISBN: " + book.isbn;
+
+                divEl.appendChild(pEl1);
+                divEl.appendChild(pEl2);
+                divEl.appendChild(pEl3);
+                divEl.appendChild(pEl4);
+
+                caller.parentElement.appendChild(divEl);
+
+                caller.classList.add("clicked");
+
             })
+        } else if((caller.tagName === "H3") && (caller.classList.contains("clicked")) ){
+            let divEl = caller.nextElementSibling;
+            divEl.parentNode.removeChild(divEl);
+            caller.classList.remove("clicked");
         }
     })
 }

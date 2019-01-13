@@ -19,7 +19,18 @@ document.addEventListener("DOMContentLoaded", function(){
             addSwPersonElement(person);
         });
 
-})
+    $.ajax({
+        url: "https://swapi.co/api/films/1/",
+        dataType: "json"
+    })
+        .done(function(dataCrawl){
+            let parentElem = document.getElementById("sw");
+            let crawlEl = document.createElement("p");
+            crawlEl.innerText = dataCrawl.opening_crawl;
+            parentElem.appendChild(crawlEl);
+        })
+
+});
 
 function addSwPersonElement(personData){
     let parentElem = document.getElementById("sw");
